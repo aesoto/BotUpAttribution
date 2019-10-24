@@ -1,0 +1,212 @@
+# Summary Attribution Process
+print('')
+print('----- Summary Attribution Process -----')
+summary_path = 'S:\\Unit10230\\CTI_CMS Project\\Summary Attribution\\'
+wb = xl.Workbook()
+wb.save(f'{summary_path}{date_input}  Summary Attribution.xlsx')
+attribution_type_list = ['NA', 'GICS', 'GICS', 'DM/EM_Country', 'GICS', 'Sec_Group/Type', 'Sec_Group/Type', 'DM/EM_Country',
+                         'DM/EM_Country', 'DM/EM_Country', 'Sec_Group/Type', 'GICS', 'NA', 'GICS', 'GICS', 'GICS',
+                         'GICS', 'NA', 'DM/EM_Country', 'GICS', 'GICS', 'Sec_Group/Type', 'GICS', 'DM/EM_Country',
+                         'GICS', 'GICS', 'Sec_Group/Type', 'GICS', 'GICS', 'Sec_Group/Type', 'NA', 'GICS',
+                         'Sec_Group/Type', 'Sec_Group/Type', 'NA', 'DM/EM_Country', 'NA', 'GICS', 'GICS', 'GICS',
+                         'Sec_Group/Type', 'GICS', 'Sec_Group/Type', 'Sec_Group/Type', 'GICS', 'GICS']
+bmk_type_list = ['', 'R3K', 'R3K', 'EAFE', 'R3K', 'AGG', 'AGG', 'EAFE', 'EAFE', 'EAFE', 'AGG', 'R3K', '', 'R3K', 'R3K', 'R3K', 'R3K',
+                 '', 'EAFE', 'R3K', 'R3K', 'AGG', 'R3K', 'EAFE', 'R3K', 'R3K', 'AGG', 'R3K', 'R3K', 'AGG', '', 'R3K',
+                 'AGG', 'AGG', '', 'EAFE', '', 'R3K', 'R3K', 'R3K', 'AGG', 'R3K', 'AGG', 'AGG', 'R3K', 'R3K']
+fund_list = ['121', '205', '206', '216', '218', '219', '221', '223', '224', '225', '227', '228', '229', '230', '231', '232', '234',
+             '246', '253', '260', '263', '264', '265', '266', '267', '272', '273', '278', '279000', '295', '296', '297',
+             '468', '490', '500', '502', '480000', '22600', '26900', '27100', '204000', '217000', '220000', '245000',
+             '306000', '24300']
+
+combine_path = f'S:\\Unit10230\\CTI_CMS Project\\InvestOne_&_Aladdin Combined Reports\\Archive\\{date_input}' \
+    f'_InvestOne_Aladdin_Daily Attribution file.csv'
+combine_bmk_path = f'S:\\Unit10230\\CTI_CMS Project\\InvestOne_&_Aladdin Combined Reports\\Archive\\{date_input}' \
+    f'_InvestOne_Aladdin_Daily Attribution Benchmark file.csv'
+map_path = f'S:\\Unit10230\\CTI_CMS Project\\EPN_MVF Map\\Archive\\{last_business_day}_EPN_MVF_Map.csv'
+
+fund_ala_bmk_id = []
+fund_id_bmk = []
+ret_cont_bmk = []
+nmv_pct_bmk = []
+country_bmk = []
+gics_2_bmk = []
+sec_type_bmk = []
+try:
+    with open(combine_bmk_path, "rt", encoding='utf8') as f:
+        csv_reader = csv.reader(f, delimiter=',')
+        for row in csv_reader:
+            fund_ala_bmk_id.append(row[1] + row[3])
+            fund_id_bmk.append(row[1])
+            try:
+                ret_cont_bmk.append(float(row[25]))
+            except ValueError:
+                ret_cont_bmk.append(0)
+            try:
+                nmv_pct_bmk.append(float(row[36]))
+            except ValueError:
+                nmv_pct_bmk.append(0)
+            try:
+                country_bmk.append(row[32])
+            except IndexError:
+                country_bmk.append('')
+            try:
+                gics_2_bmk.append(row[29])
+            except IndexError:
+                gics_2_bmk.append('')
+            try:
+                sec_type_bmk.append(row[26] + row[27])
+            except IndexError:
+                sec_type_bmk.append('')
+except FileNotFoundError:
+    print(f'Fail: No such file or directory: {combine_bmk_path}')
+    input('Press Any Key to Exit')
+    sys.exit()
+except:
+    print('Fail in reading Benchamark data')
+    input('Press Any Key to Exit')
+    sys.exit()
+
+fund_id_all = []
+ala_id_all = []
+invest1_id = []
+sec_des_all = []
+nmv_pct_all = []
+total_pct_all = []
+ret_cont_all = []
+# sec_group_all = []
+sec_type_all = []
+# gics_1_all = []
+gics_2_all = []
+country_all = []
+ret_cont_bmk_all = []
+nmv_pct_bmk_all = []
+try:
+    # for wsdf in range(1):
+    with open(combine_path, "rt", encoding='utf8') as f:
+        csv_reader = csv.reader(f, delimiter=',')
+        for row in csv_reader:
+            fund_id_all.append(row[1])
+            invest1_id.append(row[2])
+            ala_id_all.append(row[3])
+            try:
+                if row[15][-1] == '%':
+                    total_pct_all.append(float(row[15][:-1]) / 100)
+                else:
+                    total_pct_all.append(float(row[15]))
+            except ValueError:
+                total_pct_all.append(0)
+            try:
+                sec_des_all.append(row[22])
+            except IndexError:
+                sec_des_all.append('')
+            try:
+                ret_cont_all.append(float(row[25]))
+            except (IndexError, ValueError):
+                ret_cont_all.append(0)
+            try:
+                sec_type_all.append(row[26] + row[27])
+            except IndexError:
+                sec_type_all.append('')
+            try:
+                gics_2_all.append(row[29])
+            except IndexError:
+                gics_2_all.append('')
+            try:
+                country_all.append(row[32])
+            except IndexError:
+                country_all.append('')
+            try:
+                fund_mv = float(map_aum[map_parent.index(row[1])])
+            except ValueError:
+                fund_mv = 1.00
+            try:
+                nmv_pct_all.append(float(row[21]) / fund_mv)
+            except ValueError:
+                nmv_pct_all.append(0)
+            try:
+                bmk_type = bmk_type_list[fund_list.index(row[1])]
+                index = fund_ala_bmk_id.index(bmk_type + row[3])
+                ret_cont_bmk_all.append(ret_cont_bmk[index])
+                nmv_pct_bmk_all.append(nmv_pct_bmk[index])
+            except ValueError:
+                ret_cont_bmk_all.append(0)
+                nmv_pct_bmk_all.append(0)
+except FileNotFoundError:
+    print(f'Fail: No such file or directory: {combine_path}')
+    input('Press Any Key to Exit')
+    sys.exit()
+except:
+    print('Fail in reading Combined file data')
+    input('Press Any Key to Exit')
+    sys.exit()
+unique_fund_id = list(set(fund_id_all))
+try:
+    index1 = unique_fund_id.index('Fund')
+    del unique_fund_id[index1]
+except ValueError:
+    pass
+
+# unique_fund_id = ['223', '266', '225', '502']
+# unique_fund_id = ['216']
+unique_fund_id = ['121', '205', '206', '216', '218', '219', '221', '223', '224', '225', '227', '228', '229', '230', '231', '232',
+                  '234', '246', '253', '260', '263', '264', '265', '266', '267', '272', '273', '278', '279000', '295',
+                  '296', '297', '468', '490', '500', '502', '480000', '22600', '26900', '27100', '204000', '217000',
+                  '220000', '245000', '306000', '24300']
+print(f'Total funs: {len(unique_fund_id)}')
+for fund_x in unique_fund_id:
+    data_list = []
+    # sec_group = []
+    sec_type = []
+    # gics_1 = []
+    gics_2 = []
+    country = []
+    bmk_data = []
+    bmk_country_full = []
+    bmk_gics_2_full = []
+    bmk_sec_type_full = []
+    bmk_data_full = []
+    bmk_type = bmk_type_list[fund_list.index(fund_x)]
+    for x in range(len(fund_id_all)):
+        if fund_id_all[x] == fund_x:
+            data_list.append(
+                [invest1_id[x], ala_id_all[x], total_pct_all[x], sec_des_all[x], ret_cont_all[x], nmv_pct_all[x]])
+            # sec_group.append(sec_group_all[x])
+            sec_type.append(sec_type_all[x])
+            gics_2.append(gics_2_all[x])
+            country.append(country_all[x])
+            bmk_data.append([ret_cont_bmk_all[x], nmv_pct_bmk_all[x]])
+    for y in range(len(fund_id_bmk)):
+        if fund_id_bmk[y] == bmk_type:
+            bmk_country_full.append(country_bmk[y])
+            bmk_data_full.append([ret_cont_bmk[y], nmv_pct_bmk[y]])
+            bmk_gics_2_full.append(gics_2_bmk[y])
+            bmk_sec_type_full.append(sec_type_bmk[y])
+    attribution_type = attribution_type_list[fund_list.index(fund_x)]
+    if attribution_type == 'GICS':
+        try:
+            GICS.gics(date_input_read, fund_x, data_list, gics_2, bmk_data, bmk_gics_2_full, bmk_data_full, summary_path)
+            print(f'{fund_x} complete ----- {int((unique_fund_id.index(fund_x) + 1) / len(unique_fund_id) * 100)}%')
+        except (FileNotFoundError, IndexError, TypeError):
+            print(f'Fail: {fund_x}')
+    elif attribution_type == 'DM/EM_Country':
+        try:
+            DM_EM_Country.dm_em_country(date_input_read, fund_x, data_list, country, bmk_data, bmk_country_full,
+                                        bmk_data_full, summary_path)
+            print(f'{fund_x} complete ----- {int((unique_fund_id.index(fund_x) + 1) / len(unique_fund_id) * 100)}%')
+        except (FileNotFoundError, IndexError, TypeError):
+            print(f'Fail: {fund_x}')
+    elif attribution_type == 'Sec_Group/Type':
+        try:
+            Sec_Group_Type.sec_group_type(date_input_read, fund_x, data_list, sec_type, bmk_data, bmk_sec_type_full,
+                                          bmk_data_full, summary_path)
+            print(f'{fund_x} complete ----- {int((unique_fund_id.index(fund_x) + 1) / len(unique_fund_id) * 100)}%')
+        except (FileNotFoundError, IndexError, TypeError):
+            print(f'Fail: {fund_x}')
+    else:
+        pass
+print('')
+print('Done')
+print(f'File path: {summary_path}\n')
+input('Press Any key to Exit')
+
+
